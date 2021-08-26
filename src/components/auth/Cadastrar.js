@@ -49,7 +49,6 @@ const Cadastrar = () => {
       password,
       idFilial,
     });
-    console.log(userFormData);
     if (resp !== undefined) {
       setAlert(resp.mensagem, resp.tipo);
       limpaErros();
