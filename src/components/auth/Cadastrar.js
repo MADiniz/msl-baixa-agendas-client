@@ -2,12 +2,17 @@ import React, { useState, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import AlertContext from "../../context/alert/alertContext";
 import AuthContext from "../../context/auth/authContext";
+import FilialContext from "../../context/filial/filialContext";
 
 const Cadastrar = () => {
   const alertContext = useContext(AlertContext);
   const { setAlert } = alertContext;
   const authContext = useContext(AuthContext);
   const { registraUsuario, error, limpaErros, user } = authContext;
+
+  const filialContext = useContext(FilialContext);
+  const { filiais, errorFiliais, limpaErrosFiliais } = filialContext;
+
   const history = useHistory();
 
   useEffect(() => {
@@ -18,22 +23,21 @@ const Cadastrar = () => {
       setAlert(error, "danger");
       limpaErros();
     }
+    if (errorFiliais != null) {
+      setAlert(errorFiliais, "danger");
+      limpaErrosFiliais();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error, history]);
-
-  const filiais = [
-    { id: "27", nome: "São Luiz - Oliveira Paiva" },
-    { id: "28", nome: "São Luiz - Outro" },
-  ];
 
   const [userFormData, setUser] = useState({
     nome: "",
     email: "",
     password: "",
-    numeroFilial: "",
+    idFilial: "",
   });
 
-  const { nome, email, password, numeroFilial } = userFormData;
+  const { nome, email, password, idFilial } = userFormData;
   const onChange = (e) =>
     setUser({ ...userFormData, [e.target.name]: e.target.value });
 
@@ -43,17 +47,18 @@ const Cadastrar = () => {
       nome,
       email,
       password,
-      numeroFilial,
+      idFilial,
     });
+    console.log(userFormData);
     if (resp !== undefined) {
       setAlert(resp.mensagem, resp.tipo);
       limpaErros();
-      document.getElementById("numeroFilial").value = "";
+      document.getElementById("idFilial").value = "";
       setUser({
         nome: "",
         email: "",
         password: "",
-        numeroFilial: "",
+        idFilial: "",
       });
     }
   };
@@ -85,17 +90,12 @@ const Cadastrar = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="numeroFilial">Filial*</label>
-          <select
-            name="numeroFilial"
-            id="numeroFilial"
-            onChange={onChange}
-            required
-          >
+          <label htmlFor="idFilial">Filial*</label>
+          <select name="idFilial" id="idFilial" onChange={onChange} required>
             <option value="">Selecione uma filial...</option>
             {filiais.map((filial) => (
               <option key={filial.id} value={filial.id}>
-                {filial.id} - {filial.nome}
+                {filial.numero} - {filial.nome}
               </option>
             ))}
           </select>
